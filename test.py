@@ -6,7 +6,7 @@ from Particle import Particle
 from pygame.math import Vector2
 from range import *
 
-Width, Height = 1000, 1000
+Width, Height = 500, 500
 screen = pygame.display.set_mode((Width, Height))
 
 pygame.display.set_caption("Quadtree")
@@ -15,7 +15,7 @@ fps = 60
 
 Background = (0, 0, 0)
 particles = []
-RADIUS = 20
+RADIUS = 10
 
 NODE_CAPACITY = 1
 
@@ -51,7 +51,10 @@ while run:
             x, y = pygame.mouse.get_pos()
             particle = Particle(Vector2(x, y), RADIUS, (255, 255, 255))
             particles.append(particle)
-            quadtree.insert(particle)
+            a=4
+            while(a!=0):
+                quadtree.insert(particle)
+                a=a-1
 
 
     quadtree.Show(screen)
