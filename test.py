@@ -6,7 +6,7 @@ from Particle import Particle
 from pygame.math import Vector2
 from range import *
 
-Width, Height = 500, 500
+Width, Height = 1000, 1000
 screen = pygame.display.set_mode((Width, Height))
 
 pygame.display.set_caption("Quadtree")
@@ -17,16 +17,19 @@ Background = (0, 0, 0)
 particles = []
 RADIUS = 10
 
-NODE_CAPACITY = 1
+NODE_CAPACITY = 2
 
-rangeRect = Rectangle(Vector2(125, 125), Vector2(125, 125))
-rangeRect.color = (255, 0, 0)
-rangeRect.lineThickness = 2
+rangeRect = Rectangle(Vector2(250, 250), Vector2(300, 300))
+rangeRect.color = (190, 210, 55)
+rangeRect.lineThickness = 3
 
 boundary = Rectangle(Vector2(0, 0), Vector2(Width, Height))
 
 quadtree = QuadTree(NODE_CAPACITY, boundary)
 
+
+
+# print(points)
 moveParticle = False
 particleCollision = False
 showRange = True
@@ -51,10 +54,7 @@ while run:
             x, y = pygame.mouse.get_pos()
             particle = Particle(Vector2(x, y), RADIUS, (255, 255, 255))
             particles.append(particle)
-            a=4
-            while(a!=0):
-                quadtree.insert(particle)
-                a=a-1
+            quadtree.insert(particle)
 
 
     quadtree.Show(screen)
@@ -65,10 +65,7 @@ while run:
         particle.draw(screen)
 
     rangeRect.position.x, rangeRect.position.y = pygame.mouse.get_pos()
-    rangeRect.position.x -= 60 
-    rangeRect.position.y -= 60
     points = quadtree.queryRange(rangeRect)
-    
     if showRange == True:
         for point in points:
             point.Highlight((234, 210, 43))

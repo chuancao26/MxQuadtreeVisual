@@ -17,9 +17,9 @@ Background = (0, 0, 0)
 RADIUS = 10
 particles = []
 
-NODE_CAPACITY = 1
+NODE_CAPACITY = 2
 
-for i in range(50):
+for i in range(150):
     offset = 50
     x = randint(offset, Width-offset)
     y = randint(offset, Height-offset)

@@ -23,7 +23,7 @@ class Particle:
         else:
             return False
 
-    def Highlight(self, color=(0, 255, 0)):
+    def Highlight(self, color=(0, 255, 255)):
         self.highlighted = True
         self.highlightColor = color
 
@@ -38,8 +38,10 @@ class Particle:
             r, g, b = self.highlightColor
         pygame.draw.circle(surface, (r, g, b, 100), (int(_radius), int(_radius)), _radius)
         pygame.draw.circle(surface, (r, g, b, 255), (int(_radius), int(_radius)), _radius, 1)
+        # pygame.draw.circle(screen, (0, 255, 0), self.position, 3)
 
         screen.blit(surface, ( int(self.position.x) - _radius, int(self.position.y) - _radius))
+        # pygame.draw.circle(screen, self.color, self.position, self.radius)
         self.highlighted = False
 def GetDistance(x1, y1, x2, y2):
     return sqrt( (x2 - x1) * (x2-x1) + (y2 - y1) * (y2 - y1) )

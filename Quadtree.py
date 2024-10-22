@@ -1,7 +1,10 @@
 import pygame
 from pygame.math import Vector2
 from range import *
+
 class QuadTree:
+    MIN_SIZE = 10  # Tamaño mínimo del cuadrante para detener la subdivisión
+
     def __init__(self, capacity, boundary):
         self.capacity = capacity
         self.boundary = boundary
@@ -15,94 +18,87 @@ class QuadTree:
 
     def subdivide(self):
         parent = self.boundary
-        a=16
-        while a>0:
-            boundary_nw = Rectangle(
-                    Vector2(
-                    parent.position.x ,
-                    parent.position.y
-                    ),
-                parent.scale/2
-                )
-            boundary_ne = Rectangle(
-                    Vector2(
-                    parent.position.x + parent.scale.x/2,
-                    parent.position.y
-                    ),
-                    parent.scale/2
-                )
-            boundary_sw = Rectangle(
-                    Vector2(
-                    parent.position.x,
-                    parent.position.y + parent.scale.y/2
-                    ),
-                    parent.scale/2
-                )
-            boundary_se = Rectangle(
-                    Vector2(
-                    parent.position.x + parent.scale.x/2,
-                    parent.position.y + parent.scale.y/2
-                    ),
-                    parent.scale/2
-                )
 
-            self.northWest = QuadTree(self.capacity, boundary_nw)
-            self.northEast = QuadTree(self.capacity, boundary_ne)
-            self.southWest = QuadTree(self.capacity, boundary_sw)
-            self.southEast = QuadTree(self.capacity, boundary_se)
-            a/=2
+        # Calculamos los nuevos límites para los cuadrantes hijos
+        half_scale = parent.scale / 2
 
-        for i in range(len(self.particles)):
-            self.northWest.insert(self.particles[i])
-            self.northEast.insert(self.particles[i])
-            self.southWest.insert(self.particles[i])
-            self.southEast.insert(self.particles[i])
-            
+        boundary_nw = Rectangle(
+            Vector2(parent.position.x, parent.position.y),
+            half_scale
+        )
+        boundary_ne = Rectangle(
+            Vector2(parent.position.x + half_scale.x, parent.position.y),
+            half_scale
+        )
+        boundary_sw = Rectangle(
+            Vector2(parent.position.x, parent.position.y + half_scale.y),
+            half_scale
+        )
+        boundary_se = Rectangle(
+            Vector2(parent.position.x + half_scale.x, parent.position.y + half_scale.y),
+            half_scale
+        )
+
+        # Creamos las subregiones
+        self.northWest = QuadTree(self.capacity, boundary_nw)
+        self.northEast = QuadTree(self.capacity, boundary_ne)
+        self.southWest = QuadTree(self.capacity, boundary_sw)
+        self.southEast = QuadTree(self.capacity, boundary_se)
+
     def insert(self, particle):
-        if self.boundary.containsParticle(particle) == False:
+        # Verificamos si la partícula está dentro de los límites actuales
+        if not self.boundary.containsParticle(particle):
             return False
 
-        #if len(self.particles) < self.capacity and self.northWest == None:
-        #    self.particles.append(particle)
-        #    return True
-        # else:
-        
-        if self.northWest == None:
+        # Si el tamaño del cuadrante es el mínimo permitido, almacenamos la partícula en la hoja
+        if self.boundary.scale.x <= self.MIN_SIZE and self.boundary.scale.y <= self.MIN_SIZE:
+            self.particles.append(particle)
+            return True
+
+        # Si aún no se ha subdividido, lo hacemos ahora
+        if self.northWest is None:
             self.subdivide()
-        else:
-            if self.northWest.insert(particle):
-                return True
-            if self.northEast.insert(particle):
-                return True
-            if self.southWest.insert(particle):
-                return True
-            if self.southEast.insert(particle):
-                return True
-            return False
+
+        # Insertamos en los cuadrantes correspondientes
+        if self.northWest.insert(particle):
+            return True
+        if self.northEast.insert(particle):
+            return True
+        if self.southWest.insert(particle):
+            return True
+        if self.southEast.insert(particle):
+            return True
+
+        return False
 
     def queryRange(self, _range):
         particlesInRange = []
 
-        if type(_range) == Circle:
-            if _range.intersects(self.boundary)==False:
+        # Verificamos si hay intersección entre el rango y el cuadrante actual
+        if isinstance(_range, Circle):
+            if _range.intersects(self.boundary) == False:
                 return particlesInRange
-        elif type(_range) == Rectangle:
-            if _range.intersects(self.boundary)==True:
+        elif isinstance(_range, Rectangle):
+            if _range.intersects(self.boundary) == True:
                 return particlesInRange
 
+        # Verificamos las partículas dentro del cuadrante actual
         for particle in self.particles:
             if _range.containsParticle(particle):
                 particlesInRange.append(particle)
-        if self.northWest != None:
+
+        # Consultamos las subregiones si existen
+        if self.northWest is not None:
             particlesInRange += self.northWest.queryRange(_range)
             particlesInRange += self.northEast.queryRange(_range)
             particlesInRange += self.southWest.queryRange(_range)
             particlesInRange += self.southEast.queryRange(_range)
+
         return particlesInRange
 
     def Show(self, screen):
         self.boundary.Draw(screen)
-        if self.northWest != None:
+        if self.northWest is not None:
             self.northWest.Show(screen)
             self.northEast.Show(screen)
             self.southWest.Show(screen)
