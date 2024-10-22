@@ -3,10 +3,9 @@ from pygame.math import Vector2
 from range import *
 
 class QuadTree:
-    MIN_SIZE = 10  # Tamaño mínimo del cuadrante para detener la subdivisión
+    MIN_SIZE = 4
 
-    def __init__(self, capacity, boundary):
-        self.capacity = capacity
+    def __init__(self, boundary):
         self.boundary = boundary
         self.particles = []
         self.color = (255, 255, 255)
@@ -40,10 +39,10 @@ class QuadTree:
         )
 
         # Creamos las subregiones
-        self.northWest = QuadTree(self.capacity, boundary_nw)
-        self.northEast = QuadTree(self.capacity, boundary_ne)
-        self.southWest = QuadTree(self.capacity, boundary_sw)
-        self.southEast = QuadTree(self.capacity, boundary_se)
+        self.northWest = QuadTree(boundary_nw)
+        self.northEast = QuadTree(boundary_ne)
+        self.southWest = QuadTree(boundary_sw)
+        self.southEast = QuadTree(boundary_se)
 
     def insert(self, particle):
         # Verificamos si la partícula está dentro de los límites actuales
@@ -74,7 +73,6 @@ class QuadTree:
     def queryRange(self, _range):
         particlesInRange = []
 
-        # Verificamos si hay intersección entre el rango y el cuadrante actual
         if isinstance(_range, Circle):
             if _range.intersects(self.boundary) == False:
                 return particlesInRange

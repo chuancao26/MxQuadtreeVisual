@@ -17,9 +17,7 @@ Background = (0, 0, 0)
 RADIUS = 10
 particles = []
 
-NODE_CAPACITY = 2
-
-for i in range(150):
+for i in range(10):
     offset = 50
     x = randint(offset, Width-offset)
     y = randint(offset, Height-offset)
@@ -41,7 +39,7 @@ while run:
     clock.tick(fps)
 
     boundary = Rectangle(Vector2(0, 0), Vector2(Width, Height))
-    quadtree = QuadTree(NODE_CAPACITY, boundary)
+    quadtree = QuadTree(boundary)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

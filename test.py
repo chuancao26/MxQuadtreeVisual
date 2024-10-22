@@ -17,17 +17,13 @@ Background = (0, 0, 0)
 particles = []
 RADIUS = 10
 
-NODE_CAPACITY = 2
-
-rangeRect = Rectangle(Vector2(250, 250), Vector2(300, 300))
-rangeRect.color = (190, 210, 55)
+rangeRect = Rectangle(Vector2(125, 125), Vector2(125, 125))
+rangeRect.color = (0, 255, 0)
 rangeRect.lineThickness = 3
 
 boundary = Rectangle(Vector2(0, 0), Vector2(Width, Height))
 
-quadtree = QuadTree(NODE_CAPACITY, boundary)
-
-
+quadtree = QuadTree(boundary)
 
 # print(points)
 moveParticle = False
@@ -65,10 +61,14 @@ while run:
         particle.draw(screen)
 
     rangeRect.position.x, rangeRect.position.y = pygame.mouse.get_pos()
+    rangeRect.position.x -= rangeRect.scale.x // 2
+    rangeRect.position.y -= rangeRect.scale.y // 2
     points = quadtree.queryRange(rangeRect)
+
+
     if showRange == True:
         for point in points:
-            point.Highlight((234, 210, 43))
+            point.Highlight((255, 0, 255))
             point.draw(screen, RADIUS + 2)
         rangeRect.Draw(screen)
     pygame.display.flip()
