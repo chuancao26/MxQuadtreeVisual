@@ -1,7 +1,7 @@
 import pygame
 
 from random import randint
-from Quadtree import *
+from MXQuadtree import *
 from Particle import Particle
 from pygame.math import Vector2
 from range import *
@@ -9,7 +9,7 @@ from range import *
 Width, Height = 1000, 1000
 screen = pygame.display.set_mode((Width, Height))
 
-pygame.display.set_caption("Quadtree")
+pygame.display.set_caption("MXQuadtree")
 clock = pygame.time.Clock()
 fps = 60
 
@@ -23,7 +23,7 @@ rangeRect.lineThickness = 3
 
 boundary = Rectangle(Vector2(0, 0), Vector2(Width, Height))
 
-quadtree = QuadTree(boundary)
+MXquadtree = MXQuadTree(boundary)
 
 # print(points)
 moveParticle = False
@@ -32,7 +32,7 @@ showRange = True
 run = True
 while run:
     screen.fill(Background)
-    pygame.display.set_caption("QuadTree Fps: " + str(int(clock.get_fps())))
+    pygame.display.set_caption("MXQuadTree Fps: " + str(int(clock.get_fps())))
     clock.tick(fps)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -48,12 +48,14 @@ while run:
                 particleCollision = moveParticle
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = pygame.mouse.get_pos()
+            x = round(x)  
+            y = round(y) 
             particle = Particle(Vector2(x, y), RADIUS, (255, 255, 255))
             particles.append(particle)
-            quadtree.insert(particle)
+            MXquadtree.insert(particle)
 
 
-    quadtree.Show(screen)
+    MXquadtree.Show(screen)
 
     for particle in particles:
         if moveParticle:
@@ -63,7 +65,7 @@ while run:
     rangeRect.position.x, rangeRect.position.y = pygame.mouse.get_pos()
     rangeRect.position.x -= rangeRect.scale.x // 2
     rangeRect.position.y -= rangeRect.scale.y // 2
-    points = quadtree.queryRange(rangeRect)
+    points = MXquadtree.queryRange(rangeRect)
 
 
     if showRange == True:

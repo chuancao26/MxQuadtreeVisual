@@ -2,7 +2,7 @@ import pygame
 from pygame.math import Vector2
 from range import *
 
-class QuadTree:
+class MXQuadTree:
     MIN_SIZE = 4
 
     def __init__(self, boundary):
@@ -39,10 +39,10 @@ class QuadTree:
         )
 
         # Creamos las subregiones
-        self.northWest = QuadTree(boundary_nw)
-        self.northEast = QuadTree(boundary_ne)
-        self.southWest = QuadTree(boundary_sw)
-        self.southEast = QuadTree(boundary_se)
+        self.northWest = MXQuadTree(boundary_nw)
+        self.northEast = MXQuadTree(boundary_ne)
+        self.southWest = MXQuadTree(boundary_sw)
+        self.southEast = MXQuadTree(boundary_se)
 
     def insert(self, particle):
         # Verificamos si la partícula está dentro de los límites actuales

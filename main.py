@@ -1,7 +1,7 @@
 import pygame
 
 from random import randint
-from Quadtree import *
+from MXQuadtree import *
 from Particle import Particle
 from pygame.math import Vector2
 from range import *
