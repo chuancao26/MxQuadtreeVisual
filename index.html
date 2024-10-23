@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="mx.png" />
+    <title>MX Quadtree Visualization</title>
+    <style>
+      #quadtreeCanvas {
+        border: 1px solid black;
+      }
+
+      input {
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>MX Quadtree</h1>
+
+    <!-- Canvas para visualizar el Quadtree -->
+    <canvas id="quadtreeCanvas" width="400" height="400"></canvas>
+
+    <br />
+    <!-- Botón para limpiar el canvas -->
+    <button id="clearCanvas">Limpiar Canvas</button>
+
+    <!-- Controles para búsqueda por rango -->
+    <div>
+      <h3>Búsqueda por Rango</h3>
+      <label for="x1">X1:</label>
+      <input type="number" id="x1" placeholder="Coord. X1" />
+      <label for="y1">Y1:</label>
+      <input type="number" id="y1" placeholder="Coord. Y1" />
+      <label for="x2">X2:</label>
+      <input type="number" id="x2" placeholder="Coord. X2" />
+      <label for="y2">Y2:</label>
+      <input type="number" id="y2" placeholder="Coord. Y2" />
+      <button id="searchRange">Buscar en Rango</button>
+    </div>
+
+    <!-- Script para manejar el Quadtree -->
+    <script src="quadtree.js"></script>
+  </body>
+</html>

@@ -4,6 +4,7 @@ from range import *
 
 class MXQuadTree:
     MIN_SIZE = 4
+    MIN_DISTANCE = 10  # Distancia mínima permitida entre partículas
 
     def __init__(self, boundary):
         self.boundary = boundary
@@ -17,8 +18,6 @@ class MXQuadTree:
 
     def subdivide(self):
         parent = self.boundary
-
-        # Calculamos los nuevos límites para los cuadrantes hijos
         half_scale = parent.scale / 2
 
         boundary_nw = Rectangle(
@@ -38,27 +37,26 @@ class MXQuadTree:
             half_scale
         )
 
-        # Creamos las subregiones
         self.northWest = MXQuadTree(boundary_nw)
         self.northEast = MXQuadTree(boundary_ne)
         self.southWest = MXQuadTree(boundary_sw)
         self.southEast = MXQuadTree(boundary_se)
 
     def insert(self, particle):
-        # Verificamos si la partícula está dentro de los límites actuales
         if not self.boundary.containsParticle(particle):
             return False
 
-        # Si el tamaño del cuadrante es el mínimo permitido, almacenamos la partícula en la hoja
+        # Verificar si hay una partícula existente en la misma ubicación o cerca
+        if self._exists_near(particle):
+            return False
+
         if self.boundary.scale.x <= self.MIN_SIZE and self.boundary.scale.y <= self.MIN_SIZE:
             self.particles.append(particle)
             return True
 
-        # Si aún no se ha subdividido, lo hacemos ahora
         if self.northWest is None:
             self.subdivide()
 
-        # Insertamos en los cuadrantes correspondientes
         if self.northWest.insert(particle):
             return True
         if self.northEast.insert(particle):
@@ -70,22 +68,41 @@ class MXQuadTree:
 
         return False
 
+
+    def _exists_near(self, particle):
+        """Método auxiliar para verificar si una partícula ya existe cerca"""
+        # Verificar si hay partículas cercanas en la lista actual
+        for p in self.particles:
+            if p.position.distance_to(particle.position) < self.MIN_DISTANCE:
+                return True
+
+        # Verificar si hay partículas cercanas en las subdivisiones (si existen)
+        if self.northWest is not None:
+            if self.northWest._exists_near(particle):
+                return True
+            if self.northEast._exists_near(particle):
+                return True
+            if self.southWest._exists_near(particle):
+                return True
+            if self.southEast._exists_near(particle):
+                return True
+
+        return False
+
     def queryRange(self, _range):
         particlesInRange = []
 
         if isinstance(_range, Circle):
-            if _range.intersects(self.boundary) == False:
+            if not _range.intersects(self.boundary):
                 return particlesInRange
         elif isinstance(_range, Rectangle):
-            if _range.intersects(self.boundary) == True:
+            if not _range.intersects(self.boundary):
                 return particlesInRange
 
-        # Verificamos las partículas dentro del cuadrante actual
         for particle in self.particles:
             if _range.containsParticle(particle):
                 particlesInRange.append(particle)
 
-        # Consultamos las subregiones si existen
         if self.northWest is not None:
             particlesInRange += self.northWest.queryRange(_range)
             particlesInRange += self.northEast.queryRange(_range)
